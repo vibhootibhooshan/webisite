@@ -35,7 +35,7 @@ Then connect your domain, enable HTTPS, and submit `https://your-domain.com/site
 ## Structure
 ```
 src/config/site.js        business details (edit this)
-src/data/                 services + technologies content
+src/data/                 services, technologies and images.js (all photo URLs, change photos here)
 src/components/           Header, Footer, Logo, Seo, TechStack, ui (Button, Reveal, PageHero, CtaSection…)
 src/pages/                Home, Services, ServiceDetail, About, Contact, NotFound
 src/data/serviceDetails/  content for the 10 service detail pages
