@@ -1,9 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
-import {
-  ArrowRight, BadgeCheck, Check, ChevronDown, ChevronRight, CircleCheck, Code, LifeBuoy, MessageCircle, PenTool, Rocket, Search,
-} from 'lucide-react'
+import { ArrowRight, Plus } from 'lucide-react'
 import Seo from '../components/Seo'
-import { Button, CtaSection, Reveal, SectionHeading, container } from '../components/ui'
+import { Button, CtaSection, Eyebrow, PageHero, SectionHeading, container } from '../components/ui'
 import { site, whatsappLink } from '../config/site'
 import { serviceCategories } from '../data/services'
 import part1 from '../data/serviceDetails/part1'
@@ -13,14 +11,14 @@ import NotFound from './NotFound'
 const details = { ...part1, ...part2 }
 
 const steps = [
-  [Search, 'Discovery', 'We understand your goals, users and requirements to define a clear scope.'],
-  [PenTool, 'Planning & Design', 'We plan features, architecture and timeline, and design the interface for your approval.'],
-  [Code, 'Development & Testing', 'We build in short iterations with regular updates and test every feature thoroughly.'],
-  [Rocket, 'Launch', 'We deploy to production with proper configuration and a smooth handover.'],
-  [LifeBuoy, 'Support', 'We stay on for maintenance, updates and improvements after go-live.'],
+  ['Discovery', 'We talk through your goals, users and requirements, then agree a written scope.'],
+  ['Planning & design', 'We plan features and architecture, and design the screens for your sign-off before the build starts.'],
+  ['Development & testing', 'We build in short cycles, share progress regularly and test each feature before moving on.'],
+  ['Launch', 'We deploy to production, configure hosting and hand over access and documentation.'],
+  ['Support', 'We stay available for fixes, updates and improvements after go-live.'],
 ]
 
-const iconBox = 'grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-royal/10 text-royal'
+const num = (i) => String(i + 1).padStart(2, '0')
 // Escape "<" so data strings can never close the <script> tag.
 const ld = (obj) => ({ __html: JSON.stringify({ '@context': 'https://schema.org', ...obj }).replace(/</g, '\\u003c') })
 // Lowercase ordinary words, keep acronyms: "API & Backend Development" -> "API & backend development", "E-commerce" -> "e-commerce".
@@ -34,9 +32,10 @@ export default function ServiceDetail() {
   const d = details[id]
   const { title, summary } = category
   const description = d?.metaDescription ?? summary
-  // Alternate white / surface backgrounds even when optional sections are skipped.
-  const sections = ['overview', 'included', d?.benefits?.length && 'why', 'process', d?.faqs?.length && 'faqs', 'more'].filter(Boolean)
-  const bg = (key) => (sections.indexOf(key) % 2 ? 'bg-surface' : 'bg-white')
+  const contactTo = `/contact?service=${encodeURIComponent(title)}`
+  // Alternate white / surface on light sections even when optional ones are skipped ("why" is the dark section).
+  const light = ['overview', 'included', 'process', d?.faqs?.length && 'faqs', 'more'].filter(Boolean)
+  const bg = (key) => (light.indexOf(key) % 2 ? 'bg-surface' : 'bg-white')
 
   return (
     <>
@@ -57,50 +56,34 @@ export default function ServiceDetail() {
         })} />
       )}
 
-      {/* Hero — same look as PageHero, with a breadcrumb above the H1 */}
-      <section className="relative overflow-hidden bg-navy">
-        <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
-        <div className="absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-royal/25 blur-3xl" />
-        <div className={`${container} relative py-20 sm:py-28`}>
-          <div className="max-w-3xl">
-            <nav aria-label="Breadcrumb">
-              <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-slate-400">
-                {[['/', 'Home'], ['/services', 'Services']].map(([to, label]) => (
-                  <li key={to} className="flex items-center gap-1.5">
-                    <Link to={to} className="rounded transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-blue-400">{label}</Link>
-                    <ChevronRight size={14} aria-hidden="true" />
-                  </li>
-                ))}
-                <li aria-current="page" className="font-medium text-blue-400">{title}</li>
-              </ol>
-            </nav>
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl">{d?.headline ?? title}</h1>
-            <p className="mt-5 text-lg leading-relaxed text-slate-300">{summary}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button to={`/contact?service=${encodeURIComponent(title)}`}>Discuss Your Project <ArrowRight size={16} /></Button>
-              <Button href={whatsappLink(`Hi, I am interested in ${title}`)} variant="ghostLight"><MessageCircle size={16} /> Chat on WhatsApp</Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        image={category.image}
+        imageAlt={`${title} work at ${site.name}`}
+        breadcrumb={[{ label: 'Services', to: '/services' }]}
+        crumb={title}
+        title={d?.headline ?? title}
+        subtitle={summary}
+      >
+        <Button to={contactTo}>Discuss Your Project <ArrowRight size={16} aria-hidden="true" /></Button>
+        <Button href={whatsappLink(`Hi, I am interested in ${title}`)} variant="ghostLight">Chat on WhatsApp</Button>
+      </PageHero>
 
       {/* Overview */}
-      <section className={`${bg('overview')} py-20 sm:py-24`}>
-        <div className={`${container} grid items-start gap-12 lg:grid-cols-2 lg:gap-16`}>
-          <img src={category.image} alt={`${title} services by ${site.name}`} width="1200" height="800" decoding="async"
-            className="aspect-[3/2] w-full rounded-2xl border border-line bg-surface object-cover" />
+      <section className={`${bg('overview')} py-16 sm:py-24`}>
+        <div className={`${container} grid gap-8 lg:grid-cols-[2fr_3fr] lg:gap-16`}>
           <div>
-            <SectionHeading align="left" eyebrow="Overview" title={`${title} at ${site.name}`} />
-            <div className="mt-5 space-y-4 text-lg leading-relaxed text-muted">
+            <Eyebrow>Overview</Eyebrow>
+            <h2 className="mt-4 text-[28px] font-semibold leading-tight tracking-tight text-navy sm:text-4xl">{title} at {site.name}</h2>
+          </div>
+          <div>
+            <div className="space-y-5 text-base leading-relaxed text-muted sm:text-lg">
               {(d?.intro ?? [summary]).map((p) => <p key={p}>{p}</p>)}
             </div>
             {d?.idealFor?.length > 0 && (
-              <div className="mt-8 rounded-2xl border border-line bg-surface p-6">
-                <h3 className="font-semibold text-navy">Ideal for</h3>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {d.idealFor.map((t) => (
-                    <li key={t} className="flex gap-3 text-sm text-ink"><Check size={18} className="mt-0.5 shrink-0 text-royal" aria-hidden="true" />{t}</li>
-                  ))}
+              <div className="mt-12">
+                <h3 className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-navy">Ideal for</h3>
+                <ul className="mt-4 divide-y divide-line border-y border-line">
+                  {d.idealFor.map((t) => <li key={t} className="py-3.5 text-base text-ink">{t}</li>)}
                 </ul>
               </div>
             )}
@@ -109,59 +92,56 @@ export default function ServiceDetail() {
       </section>
 
       {/* What's included */}
-      <section className={`${bg('included')} py-20 sm:py-24`}>
+      <section className={`${bg('included')} py-16 sm:py-24`}>
         <div className={container}>
-          <SectionHeading eyebrow="What’s Included" title="How we can help"
-            subtitle="Choose a single service or combine several — every engagement is scoped around your requirements." />
-          <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <SectionHeading eyebrow="What’s included" title={`Our ${lower(title)} services`}
+            subtitle="Take a single service or combine several. Each engagement is scoped to your requirements." />
+          <ol className="mt-10 grid gap-x-16 border-b border-line sm:mt-14 lg:grid-cols-2">
             {category.items.map((s, i) => (
-              <Reveal as="li" key={s.name} delay={(i % 4) * 60}
-                className="rounded-2xl border border-line bg-white p-6 transition duration-200 hover:-translate-y-0.5 hover:border-royal/30 hover:shadow-lg hover:shadow-navy/5">
-                <span className={iconBox}><CircleCheck size={20} aria-hidden="true" /></span>
-                <h3 className="mt-5 font-semibold text-navy">{s.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{s.description}</p>
-              </Reveal>
+              <li key={s.name} className="grid grid-cols-[2.5rem_1fr] gap-x-3 border-t border-line py-6 sm:py-8">
+                <span className="pt-1 font-mono text-sm text-royal">{num(i)}</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-navy">{s.name}</h3>
+                  <p className="mt-2 text-base leading-relaxed text-muted">{s.description}</p>
+                </div>
+              </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </section>
 
       {/* Why choose us */}
       {d?.benefits?.length > 0 && (
-        <section className={`${bg('why')} py-20 sm:py-24`}>
-          <div className={`${container} grid gap-12 lg:grid-cols-[2fr_3fr] lg:gap-16`}>
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <SectionHeading align="left" eyebrow={`Why ${site.name}`} title={`Why choose ${site.name} for ${title}`} />
-              <Button to={`/contact?service=${encodeURIComponent(title)}`} className="mt-8">Discuss Your Project <ArrowRight size={16} /></Button>
-            </div>
-            <ul className="grid gap-4 sm:grid-cols-2">
+        <section className="bg-navy py-16 sm:py-24">
+          <div className={container}>
+            <SectionHeading dark eyebrow={`Why ${site.name}`} title={`Why clients choose us for ${lower(title)}`} />
+            <ol className="mt-10 grid gap-x-16 sm:mt-14 md:grid-cols-2">
               {d.benefits.map((b, i) => (
-                <Reveal as="li" key={b.title} delay={(i % 2) * 80} className="rounded-2xl border border-line bg-white p-6">
-                  <span className={iconBox}><BadgeCheck size={20} aria-hidden="true" /></span>
-                  <h3 className="mt-5 text-lg font-semibold text-navy">{b.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{b.text}</p>
-                </Reveal>
+                <li key={b.title} className="border-t border-white/15 pt-6 pb-10">
+                  <span className="font-mono text-sm text-blue-300">{num(i)}</span>
+                  <h3 className="mt-3 text-xl font-semibold text-white">{b.title}</h3>
+                  <p className="mt-3 text-base leading-relaxed text-slate-300">{b.text}</p>
+                </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </section>
       )}
 
-      {/* Process */}
-      <section className={`${bg('process')} py-20 sm:py-24`}>
+      {/* How we deliver */}
+      <section className={`${bg('process')} py-16 sm:py-24`}>
         <div className={container}>
-          <SectionHeading eyebrow="How We Work" title="A simple, transparent process"
-            subtitle="You always know what is happening and what comes next." />
-          <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {steps.map(([Icon, name, text], i) => (
-              <Reveal as="li" key={name} delay={i * 60} className="rounded-2xl border border-line bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-navy text-white"><Icon size={18} aria-hidden="true" /></span>
-                  <span className="text-2xl font-bold text-royal/15" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <SectionHeading eyebrow="How we deliver" title="Five stages, every project"
+            subtitle="You know what is happening now and what comes next." />
+          <ol className="mt-10 divide-y divide-line border-y border-line sm:mt-14 lg:grid lg:grid-cols-5 lg:divide-x lg:divide-y-0">
+            {steps.map(([name, text], i) => (
+              <li key={name} className="grid grid-cols-[2.5rem_1fr] gap-x-3 py-6 lg:block lg:px-6 lg:py-8 lg:first:pl-0">
+                <span className="pt-0.5 font-mono text-sm text-royal">{num(i)}</span>
+                <div className="lg:mt-4">
+                  <h3 className="font-semibold text-navy">{name}</h3>
+                  <p className="mt-2 text-base leading-relaxed text-muted">{text}</p>
                 </div>
-                <h3 className="mt-4 font-semibold text-navy">{name}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{text}</p>
-              </Reveal>
+              </li>
             ))}
           </ol>
         </div>
@@ -169,17 +149,17 @@ export default function ServiceDetail() {
 
       {/* FAQs */}
       {d?.faqs?.length > 0 && (
-        <section className={`${bg('faqs')} py-20 sm:py-24`}>
-          <div className={container}>
-            <SectionHeading eyebrow="FAQs" title="Frequently asked questions" />
-            <div className="mx-auto mt-12 max-w-3xl space-y-3">
+        <section className={`${bg('faqs')} py-16 sm:py-24`}>
+          <div className={`${container} grid gap-8 lg:grid-cols-[2fr_3fr] lg:gap-16`}>
+            <SectionHeading eyebrow="FAQs" title="Common questions" />
+            <div className="divide-y divide-line border-y border-line">
               {d.faqs.map(({ q, a }) => (
-                <details key={q} className="group rounded-2xl border border-line bg-white transition-colors open:border-royal/30">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl p-5 font-semibold text-navy focus-visible:outline-2 focus-visible:outline-royal [&::-webkit-details-marker]:hidden">
+                <details key={q} className="group">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 py-5 text-base font-semibold text-navy transition-colors hover:text-royal focus-visible:outline-2 focus-visible:outline-royal sm:text-lg [&::-webkit-details-marker]:hidden">
                     {q}
-                    <ChevronDown size={20} aria-hidden="true" className="shrink-0 text-muted transition-transform duration-200 group-open:rotate-180 group-open:text-royal" />
+                    <Plus size={20} aria-hidden="true" className="shrink-0 text-royal transition-transform duration-200 group-open:rotate-45" />
                   </summary>
-                  <p className="px-5 pb-5 leading-relaxed text-muted">{a}</p>
+                  <p className="pb-6 pr-8 text-base leading-relaxed text-muted">{a}</p>
                 </details>
               ))}
             </div>
@@ -188,17 +168,16 @@ export default function ServiceDetail() {
       )}
 
       {/* Other services */}
-      <section className={`${bg('more')} py-20 sm:py-24`}>
+      <section className={`${bg('more')} py-16 sm:py-24`}>
         <div className={container}>
-          <SectionHeading eyebrow="More Services" title="Explore other services" />
-          <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {serviceCategories.filter((c) => c.id !== id).map(({ id: cid, title: ct, icon: Icon }) => (
-              <li key={cid}>
-                <Link to={`/services/${cid}`}
-                  className="group flex items-center gap-4 rounded-2xl border border-line bg-white p-4 transition hover:border-royal/30 hover:shadow-lg hover:shadow-royal/5 focus-visible:outline-2 focus-visible:outline-royal">
-                  <span className={iconBox}><Icon size={20} aria-hidden="true" /></span>
-                  <span className="font-semibold text-navy">{ct}</span>
-                  <ArrowRight size={16} aria-hidden="true" className="ml-auto shrink-0 text-royal transition-transform group-hover:translate-x-0.5" />
+          <SectionHeading eyebrow="More services" title="Other services we offer" />
+          <ul className="mt-10 grid gap-x-10 border-b border-line sm:grid-cols-2 lg:grid-cols-3">
+            {serviceCategories.filter((c) => c.id !== id).map((c) => (
+              <li key={c.id} className="border-t border-line">
+                <Link to={`/services/${c.id}`}
+                  className="group flex min-h-14 items-center justify-between gap-4 py-4 font-medium text-navy transition-colors hover:text-royal focus-visible:outline-2 focus-visible:outline-royal">
+                  {c.title}
+                  <ArrowRight size={16} aria-hidden="true" className="shrink-0 text-royal" />
                 </Link>
               </li>
             ))}

@@ -1,17 +1,14 @@
-import {
-  Globe, Code, Smartphone, LayoutDashboard, Server, Palette, Cloud, Workflow, ShoppingCart, Lightbulb,
-} from 'lucide-react'
 
-const img = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=75`
+import { images } from './images'
 
 // Shared by Home, Services, Contact (dropdown) and Footer.
-// Category-level fields (id, title, icon, summary, image) are relied on site-wide.
+// Category-level fields (id, title, summary, image) are relied on site-wide.
 // items: [name, description] pairs, mapped to { name, description } below.
 export const serviceCategories = [
   {
-    id: 'website-development', title: 'Website Development', icon: Globe,
+    id: 'website-development', title: 'Website Development',
     summary: 'Fast, secure and SEO-ready websites that represent your business professionally and convert visitors into enquiries.',
-    image: img('1460925895917-afdab827c52f'),
+    image: images['website-development'],
     items: [
       ['Business Website Development', 'Professional websites for small and growing businesses that clearly present your services, build trust and make it easy for customers to contact you.'],
       ['Corporate Website Development', 'Multi-page corporate sites with structured content for company profile, divisions, careers and investor or media information, built to reflect your brand standards.'],
@@ -24,9 +21,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'software-development', title: 'Software Development', icon: Code,
-    summary: 'Custom business software built around your workflows — from ERP and CRM to billing, inventory and HR systems.',
-    image: img('1555066931-4365d14bab8c'),
+    id: 'software-development', title: 'Software Development',
+    summary: 'Custom business software built around your workflows, from ERP and CRM to billing, inventory and HR systems.',
+    image: images['software-development'],
     items: [
       ['Custom Software Development', 'Software designed around how your business actually operates, from requirement analysis and design through development, testing and deployment.'],
       ['Business Management Software', 'Centralised systems to manage day-to-day operations such as tasks, clients, staff and reports in one place.'],
@@ -39,9 +36,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'mobile-app-development', title: 'Mobile App Development', icon: Smartphone,
+    id: 'mobile-app-development', title: 'Mobile App Development',
     summary: 'Android, iOS and cross-platform apps with clean UI, reliable performance and secure API integration.',
-    image: img('1512941937669-90a1b58e7e9c'),
+    image: images['mobile-app-development'],
     items: [
       ['Android App Development', 'Android apps built for performance across a wide range of devices and screen sizes, prepared for Google Play Store release.'],
       ['iOS App Development', 'iPhone and iPad apps that follow Apple design guidelines and are prepared for App Store review and submission.'],
@@ -53,9 +50,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'web-application-development', title: 'Web Application Development', icon: LayoutDashboard,
+    id: 'web-application-development', title: 'Web Application Development',
     summary: 'Scalable SaaS products, dashboards, portals and real-time platforms engineered for growth.',
-    image: img('1551434678-e076c223a692'),
+    image: images['web-application-development'],
     items: [
       ['SaaS Application Development', 'Multi-tenant SaaS products with user onboarding, subscription billing, role management and an architecture that scales as you add customers.'],
       ['Admin Dashboard Development', 'Data-rich admin panels with charts, filters, user management and reports to monitor and control your business operations.'],
@@ -67,9 +64,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'api-backend-development', title: 'API & Backend Development', icon: Server,
-    summary: 'Robust REST APIs, databases and backend systems with secure authentication and payment integrations.',
-    image: img('1558494949-ef010cbdcc31'),
+    id: 'api-backend-development', title: 'API & Backend Development',
+    summary: 'Reliable REST APIs, databases and backend systems with secure authentication and payment integrations.',
+    image: images['api-backend-development'],
     items: [
       ['REST API Development', 'Well-structured, documented REST APIs with versioning, validation and error handling for web and mobile clients.'],
       ['Backend Development', 'Server-side logic in Node.js, Python or PHP that is secure, maintainable and designed to handle growing traffic.'],
@@ -81,22 +78,22 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'ui-ux-frontend', title: 'UI/UX & Frontend Development', icon: Palette,
+    id: 'ui-ux-frontend', title: 'UI/UX & Frontend Development',
     summary: 'Intuitive interfaces and responsive React frontends designed for clarity, usability and conversion.',
-    image: img('1581291518857-4e27b48ff24e'),
+    image: images['ui-ux-frontend'],
     items: [
       ['Website UI/UX Design', 'Clean, conversion-focused website layouts with clear hierarchy, consistent typography and a strong visual identity.'],
       ['Application UI/UX Design', 'User flows, wireframes and interface designs for web and mobile applications that make complex tasks simple.'],
-      ['Responsive Web Design', 'Layouts that adapt seamlessly to phones, tablets and desktops so every visitor gets a consistent experience.'],
+      ['Responsive Web Design', 'Layouts that adapt cleanly to phones, tablets and desktops so every visitor gets a consistent experience.'],
       ['React.js Development', 'Component-based React frontends with clean state management, routing and performance tuning.'],
       ['Frontend Development', 'Pixel-accurate conversion of designs into accessible, fast-loading HTML, CSS and JavaScript.'],
       ['Dashboard Design', 'Clear data visualisation, tables and filter layouts that help users understand metrics and act quickly.'],
     ],
   },
   {
-    id: 'cloud-it-solutions', title: 'Cloud & IT Solutions', icon: Cloud,
+    id: 'cloud-it-solutions', title: 'Cloud & IT Solutions',
     summary: 'Cloud deployment, server and VPS management, migrations and dependable technical support.',
-    image: img('1451187580459-43490279c0fa'),
+    image: images['cloud-it-solutions'],
     items: [
       ['Cloud Application Deployment', 'Deployment of web apps and APIs on AWS, DigitalOcean and similar platforms with SSL, domains and environment configuration.'],
       ['Server Configuration', 'Linux server setup with Nginx, firewalls, process managers and security hardening for stable production hosting.'],
@@ -108,9 +105,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'automation-integration', title: 'Automation & Integration', icon: Workflow,
-    summary: 'Automate repetitive work and connect your tools — WhatsApp, email, payments and third-party software.',
-    image: img('1518432031352-d6fc5c10da5a'),
+    id: 'automation-integration', title: 'Automation & Integration',
+    summary: 'Automate repetitive work and connect your tools: WhatsApp, email, payments and third-party software.',
+    image: images['automation-integration'],
     items: [
       ['Business Process Automation', 'Identify repetitive manual tasks and automate them with custom scripts and software to save time and reduce errors.'],
       ['Workflow Automation', 'Automated approvals, notifications, task assignment and data entry across your team’s daily workflows.'],
@@ -121,9 +118,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'ecommerce-solutions', title: 'E-commerce Solutions', icon: ShoppingCart,
+    id: 'ecommerce-solutions', title: 'E-commerce Solutions',
     summary: 'Complete online selling solutions with product, order, payment and shipping management.',
-    image: img('1556742049-0cfed4f6a45d'),
+    image: images['ecommerce-solutions'],
     items: [
       ['Online Shopping Websites', 'Complete online stores with category browsing, search, wishlist, cart and secure checkout built for mobile shoppers.'],
       ['Product Management Systems', 'Manage products, variants, pricing, images and stock levels from a single, easy-to-use interface.'],
@@ -134,9 +131,9 @@ export const serviceCategories = [
     ],
   },
   {
-    id: 'consulting-maintenance', title: 'Software Consulting & Maintenance', icon: Lightbulb,
+    id: 'consulting-maintenance', title: 'Software Consulting & Maintenance',
     summary: 'Technical consulting, architecture, testing, performance tuning and ongoing support for your software.',
-    image: img('1600880292203-757bb62b4baf'),
+    image: images['consulting-maintenance'],
     items: [
       ['IT Consulting', 'Practical guidance on choosing the right technology, tools and approach for your business goals and budget.'],
       ['Software Architecture', 'Planning system structure, technology stack, data models and integrations so your software stays scalable and maintainable.'],

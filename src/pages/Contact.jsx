@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Mail, Phone, MessageCircle, MapPin, CheckCircle2, AlertCircle, Loader2, Send } from 'lucide-react'
+// Icons are functional only: status (CheckCircle2/AlertCircle), spinner (Loader2), button arrow, accordion toggle (Plus).
+import { CheckCircle2, AlertCircle, Loader2, ArrowRight, Plus } from 'lucide-react'
 import { container, Button, PageHero } from '../components/ui'
+import { images } from '../data/images'
 import Seo from '../components/Seo'
 import { site, whatsappLink, telLink, mailLink } from '../config/site'
 import { serviceCategories } from '../data/services'
@@ -11,17 +13,42 @@ const budgetOptions = ['Under ₹25,000', '₹25,000 – ₹1,00,000', '₹1,00,
 const empty = { name: '', email: '', phone: '', company: '', service: '', budget: '', message: '' }
 
 const channels = [
-  { icon: Mail, label: 'Business email', value: site.email, href: mailLink },
-  { icon: Phone, label: 'Contact number', value: site.phone, href: telLink },
-  { icon: MessageCircle, label: 'WhatsApp', value: 'Chat with us on WhatsApp', href: whatsappLink(), external: true },
-  { icon: MapPin, label: 'Business address', value: site.address },
+  { label: 'Email', value: site.email, href: mailLink },
+  { label: 'Phone', value: site.phone, href: telLink },
+  { label: 'WhatsApp', value: 'Message us on WhatsApp', href: whatsappLink(), external: true },
+  { label: 'Address', value: site.address },
 ]
 
 const steps = [
-  { title: 'We review your requirements', text: 'We go through the details you share to understand your goals and scope.' },
-  { title: 'We get back to you', text: 'We reach out by email, phone or WhatsApp — whichever suits you best.' },
-  { title: 'Free consultation', text: 'We discuss the right approach, technology and timelines, with no obligation.' },
+  { title: 'We review your enquiry', text: 'We read the details you send and note any questions about goals, scope or timing.' },
+  { title: 'We get back to you', text: 'We reply by email, phone or WhatsApp, whichever you prefer.' },
+  { title: 'Free consultation', text: 'A call to agree the approach, technology and a realistic plan. There is no obligation.' },
 ]
+
+const faqs = [
+  {
+    q: 'What should I include in my enquiry?',
+    a: 'Tell us what you want built or fixed, who will use it, and any deadline or budget range you have in mind. Links to similar websites or apps, or existing documents, are useful too. If you are not sure about the details yet, that is fine. We can work them out together on the first call.',
+  },
+  {
+    q: 'Is the first consultation free?',
+    a: 'Yes. The first consultation is free and there is no obligation. We use it to understand your requirements and suggest a sensible scope, technology and next steps.',
+  },
+  {
+    q: 'Do you work with clients outside India?',
+    a: 'Yes. We work remotely with clients in other countries and keep in touch by email, WhatsApp and video calls, at times that suit both time zones.',
+  },
+  {
+    q: 'Can you take over or fix an existing project?',
+    a: 'Yes. We take on bug fixing, ongoing maintenance and migration of existing websites, apps and systems. We start by reviewing the code and hosting, then tell you what we found and what we recommend.',
+  },
+  {
+    q: 'How soon will I hear back?',
+    a: 'We read every enquiry and reply as soon as we can, usually on the channel you used to contact us. If your request is urgent, WhatsApp is the quickest way to reach us.',
+  },
+]
+
+const monoLabel = 'font-mono text-xs font-medium uppercase tracking-[0.14em] text-muted'
 
 // Key order = field order, so the first key is the first invalid field.
 function validate(d) {
@@ -53,15 +80,15 @@ const toWhatsappText = (d) => [
   d.message,
 ].filter((l) => l !== null).join('\n')
 
-function Field({ id, label, required, error, children }) {
+function Field({ id, label, required, error, className = '', children }) {
   return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-navy">
+    <div className={className}>
+      <label htmlFor={id} className="block text-[15px] font-medium text-navy">
         {label}
-        {required ? <span className="text-red-600" aria-hidden="true"> *</span> : <span className="font-normal text-muted"> (optional)</span>}
+        {required ? <span className="text-red-700" aria-hidden="true"> *</span> : <span className="font-normal text-muted"> (optional)</span>}
       </label>
       {children}
-      {error && <p id={`${id}-error`} className="mt-1.5 text-sm text-red-600">{error}</p>}
+      {error && <p id={`${id}-error`} className="mt-1.5 text-sm text-red-700">{error}</p>}
     </div>
   )
 }
@@ -88,7 +115,7 @@ export default function Contact() {
       onBlur: () => submitted && setErrors(validate(data)),
       'aria-invalid': err ? true : undefined,
       'aria-describedby': err ? `${id}-error` : undefined,
-      className: `mt-2 block w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-slate-400 focus:outline-none focus:ring-4 ${err ? 'border-red-400 focus:border-red-500 focus:ring-red-500/15' : 'border-line hover:border-slate-300 focus:border-royal focus:ring-royal/15'}`,
+      className: `mt-2 block min-h-12 w-full rounded-md border bg-white px-3.5 py-2.5 text-base text-ink transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 ${err ? 'border-red-600 focus:border-red-600 focus:ring-red-600/25' : 'border-line hover:border-slate-400 focus:border-royal focus:ring-royal/30'}`,
     }
   }
 
@@ -115,7 +142,7 @@ export default function Contact() {
 
     if (!site.formEndpoint) {
       window.open(whatsappLink(toWhatsappText(payload)), '_blank', 'noopener,noreferrer')
-      succeed('Your enquiry has been prepared in WhatsApp — just press send.')
+      succeed('Your enquiry is ready in WhatsApp. Just press send.')
       return
     }
 
@@ -127,7 +154,7 @@ export default function Contact() {
         body: JSON.stringify(payload),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      succeed('Thank you! Your enquiry has been sent. We will review it and get back to you soon.')
+      succeed('Thank you. Your enquiry has been sent. We will review it and get back to you soon.')
     } catch {
       setStatus({ type: 'error' })
     }
@@ -140,75 +167,70 @@ export default function Contact() {
         description={`Contact ${site.name} to discuss your website, software or mobile app project. Share your requirements and get a free consultation.`}
       />
       <PageHero
-        eyebrow="Get in touch"
+        image={images.contactHero}
         title="Contact Us"
-        subtitle="Let’s discuss your project. Tell us what you want to build and we’ll help you plan the right solution — scope, technology and timelines."
-      >
-        <Button href={whatsappLink()}><MessageCircle size={16} /> Chat on WhatsApp</Button>
-        <Button href={mailLink} variant="ghostLight"><Mail size={16} /> Email us</Button>
-      </PageHero>
+        subtitle="Tell us about your project. We’ll get back to you with next steps and a free consultation."
+      />
 
       <section className="py-16 sm:py-24">
-        <div className={`${container} grid gap-10 lg:grid-cols-5 lg:gap-12`}>
-          <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8 lg:col-span-3">
-            <h2 className="text-2xl font-bold tracking-tight text-navy">Tell us about your project</h2>
-            <p className="mt-2 text-sm text-muted">Fields marked <span className="text-red-600">*</span> are required.</p>
+        <div className={`${container} grid gap-16 lg:grid-cols-12 lg:gap-12`}>
+          <div className="lg:col-span-7">
+            <h2 className="text-[28px] font-semibold leading-tight tracking-tight text-navy sm:text-4xl">Send us an enquiry</h2>
+            <p className="mt-3 text-base text-muted">Fields marked <span className="text-red-700">*</span> are required.</p>
 
-            <form noValidate onSubmit={handleSubmit} className="mt-8 grid gap-5 sm:grid-cols-2">
-              <Field id="contact-name" label="Full Name" required error={errors.name}>
+            <form noValidate onSubmit={handleSubmit} className="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-x-5">
+              <Field id="contact-name" label="Full name" required error={errors.name}>
                 <input type="text" autoComplete="name" placeholder="Your full name" {...bind('name')} />
               </Field>
-              <Field id="contact-email" label="Email Address" required error={errors.email}>
+              <Field id="contact-email" label="Email address" required error={errors.email}>
                 <input type="email" autoComplete="email" placeholder="you@company.com" {...bind('email')} />
               </Field>
-              <Field id="contact-phone" label="Phone Number" required error={errors.phone}>
+              <Field id="contact-phone" label="Phone number" required error={errors.phone}>
                 <input type="tel" autoComplete="tel" inputMode="tel" placeholder="+91 98765 43210" {...bind('phone')} />
               </Field>
-              <Field id="contact-company" label="Company Name" error={errors.company}>
+              <Field id="contact-company" label="Company name" error={errors.company}>
                 <input type="text" autoComplete="organization" placeholder="Your company" {...bind('company', false)} />
               </Field>
-              <Field id="contact-service" label="Service Required" required error={errors.service}>
+              <Field id="contact-service" label="Service required" required error={errors.service}>
                 <select {...bind('service')}>
                   <option value="" disabled>Select a service</option>
                   {serviceOptions.map((o) => <option key={o}>{o}</option>)}
                 </select>
               </Field>
-              <Field id="contact-budget" label="Project Budget" error={errors.budget}>
+              <Field id="contact-budget" label="Project budget" error={errors.budget}>
                 <select {...bind('budget', false)}>
                   <option value="">Select a budget range</option>
                   {budgetOptions.map((o) => <option key={o}>{o}</option>)}
                 </select>
               </Field>
-              <div className="sm:col-span-2">
-                <Field id="contact-message" label="Project Description" required error={errors.message}>
-                  <textarea rows={5} placeholder="Briefly describe your project, goals and any features you have in mind." {...bind('message')} />
-                </Field>
-              </div>
+              <Field id="contact-message" label="Project description" required error={errors.message} className="sm:col-span-2">
+                <textarea rows={6} placeholder="What do you want to build or fix? Who will use it? Any deadline or features you have in mind?" {...bind('message')} />
+              </Field>
 
               <div className="sm:col-span-2">
-                <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+                <Button type="submit" disabled={loading} className="min-h-12 w-full sm:w-auto">
                   {loading
-                    ? <><Loader2 size={16} className="animate-spin" /> Sending…</>
-                    : <><Send size={16} /> {site.formEndpoint ? 'Send Enquiry' : 'Send Enquiry via WhatsApp'}</>}
+                    ? <><Loader2 size={16} className="animate-spin" aria-hidden="true" /> Sending…</>
+                    : <>{site.formEndpoint ? 'Send enquiry' : 'Send enquiry via WhatsApp'} <ArrowRight size={16} aria-hidden="true" /></>}
                 </Button>
                 {!site.formEndpoint && (
-                  <p className="mt-3 text-xs text-muted">This opens WhatsApp with your details filled in, ready to send.</p>
+                  <p className="mt-3 text-sm text-muted">This opens WhatsApp with your details filled in, ready to send.</p>
                 )}
 
                 <div aria-live="polite" role="status">
                   {status?.type === 'success' && (
-                    <div className="mt-5 flex gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                      <CheckCircle2 size={20} className="shrink-0 text-green-600" aria-hidden="true" />
+                    <div className="mt-6 flex gap-3 border-l-4 border-green-700 bg-green-50 px-4 py-3 text-base text-green-900">
+                      <CheckCircle2 size={18} className="mt-1 shrink-0 text-green-700" aria-hidden="true" />
                       <p>{status.text}</p>
                     </div>
                   )}
                   {status?.type === 'error' && (
-                    <div className="mt-5 flex gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-                      <AlertCircle size={20} className="shrink-0 text-red-600" aria-hidden="true" />
+                    <div className="mt-6 flex gap-3 border-l-4 border-red-700 bg-red-50 px-4 py-3 text-base text-red-900">
+                      <AlertCircle size={18} className="mt-1 shrink-0 text-red-700" aria-hidden="true" />
                       <p>
                         Sorry, we couldn’t send your enquiry right now. Please try again, or reach us directly on{' '}
-                        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="font-semibold underline">WhatsApp</a>{' '}
-                        or by <a href={mailLink} className="font-semibold underline">email</a>.
+                        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="font-medium underline">WhatsApp</a>{' '}
+                        or by <a href={mailLink} className="font-medium underline">email</a>.
                       </p>
                     </div>
                   )}
@@ -217,56 +239,78 @@ export default function Contact() {
             </form>
           </div>
 
-          <aside className="space-y-8 lg:col-span-2">
-            <ul className="space-y-4">
-              {channels.map(({ icon: Icon, label, value, href, external }) => {
-                const Tag = href ? 'a' : 'div'
-                return (
-                  <li key={label}>
-                    <Tag
-                      {...(href && { href })}
-                      {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-                      className={`flex items-start gap-4 rounded-xl border border-line bg-white p-5 transition ${href ? 'hover:border-royal/40 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal' : ''}`}
-                    >
-                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-surface text-royal">
-                        <Icon size={20} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-xs font-semibold uppercase tracking-wider text-muted">{label}</span>
-                        <span className="mt-1 block break-words whitespace-pre-line text-sm font-semibold text-navy">{value}</span>
-                      </span>
-                    </Tag>
-                  </li>
-                )
-              })}
-            </ul>
+          <aside className="space-y-14 lg:col-span-5 lg:border-l lg:border-line lg:pl-12">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-navy sm:text-2xl">Contact details</h2>
+              <dl className="mt-6 border-t border-line">
+                {channels.map(({ label, value, href, external }) => (
+                  <div key={label} className="border-b border-line py-4">
+                    <dt className={monoLabel}>{label}</dt>
+                    <dd className="mt-1 text-base text-navy sm:text-lg">
+                      {href ? (
+                        <a
+                          href={href}
+                          {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
+                          className="inline-block max-w-full break-words py-1.5 font-medium text-royal underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal"
+                        >
+                          {value}
+                          {external && <span className="sr-only"> (opens in a new tab)</span>}
+                        </a>
+                      ) : (
+                        <span className="block break-words whitespace-pre-line pt-1.5">{value}</span>
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              {site.mapEmbedUrl && (
+                <iframe
+                  src={site.mapEmbedUrl}
+                  title={`${site.name} location on Google Maps`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                  className="mt-8 aspect-[4/3] w-full rounded-md border border-line"
+                />
+              )}
+            </div>
 
-            <div className="rounded-2xl bg-surface p-6 sm:p-8">
-              <h2 className="text-lg font-bold text-navy">What happens next?</h2>
-              <ol className="mt-5 space-y-5">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight text-navy sm:text-2xl">What happens next</h2>
+              <ol className="mt-6 border-t border-line">
                 {steps.map((s, i) => (
-                  <li key={s.title} className="flex gap-4">
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-royal text-sm font-bold text-white">{i + 1}</span>
+                  <li key={s.title} className="flex gap-5 border-b border-line py-5">
+                    <span className="pt-0.5 font-mono text-sm font-medium text-royal">{String(i + 1).padStart(2, '0')}</span>
                     <div>
-                      <p className="font-semibold text-navy">{s.title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-muted">{s.text}</p>
+                      <p className="font-medium text-navy">{s.title}</p>
+                      <p className="mt-1 text-base leading-relaxed text-muted">{s.text}</p>
                     </div>
                   </li>
                 ))}
               </ol>
             </div>
-
-            {site.mapEmbedUrl && (
-              <iframe
-                src={site.mapEmbedUrl}
-                title={`${site.name} location on Google Maps`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-                className="h-72 w-full rounded-2xl border border-line"
-              />
-            )}
           </aside>
+        </div>
+      </section>
+
+      <section className="bg-surface pb-24 pt-16 sm:py-24">
+        <div className={`${container} grid gap-10 lg:grid-cols-12 lg:gap-12`}>
+          <div className="lg:col-span-4">
+            <p className={monoLabel}>FAQ</p>
+            <h2 className="mt-4 text-[28px] font-semibold leading-tight tracking-tight text-navy sm:text-4xl">Common questions</h2>
+            <p className="mt-4 text-base leading-relaxed text-muted sm:text-lg">What people usually ask before getting in touch.</p>
+          </div>
+          <div className="border-t border-line lg:col-span-8">
+            {faqs.map(({ q, a }) => (
+              <details key={q} className="group border-b border-line">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-5 text-base font-medium text-navy transition-colors hover:text-royal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal sm:text-lg [&::-webkit-details-marker]:hidden">
+                  {q}
+                  <Plus size={20} className="shrink-0 text-royal group-open:rotate-45" aria-hidden="true" />
+                </summary>
+                <p className="max-w-2xl pb-6 text-base leading-relaxed text-muted">{a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
     </>

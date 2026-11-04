@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { MessageCircle } from 'lucide-react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { whatsappLink } from './config/site'
@@ -26,8 +25,8 @@ function Layout() {
       <main id="main" className="flex-1"><Outlet /></main>
       <Footer />
       <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"
-        className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition-transform hover:scale-105">
-        <MessageCircle size={26} />
+        className="fixed bottom-4 right-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] shadow-md shadow-black/20 transition-transform hover:scale-105 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14">
+        <img src="https://cdn.simpleicons.org/whatsapp/white" alt="" width="26" height="26" className="h-6 w-6 sm:h-7 sm:w-7" />
       </a>
     </div>
   )
